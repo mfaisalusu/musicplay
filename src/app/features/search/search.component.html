@@ -1,0 +1,108 @@
+<div class="p-6 max-w-4xl mx-auto">
+  <h1 class="text-white text-3xl font-bold mb-6">Search</h1>
+
+  <div class="relative mb-6">
+    <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+    </svg>
+    <input
+      type="text"
+      [(ngModel)]="query"
+      (ngModelChange)="search$.next($event)"
+      placeholder="Search users, playlists, music..."
+      class="w-full bg-surface-2 text-white rounded-xl pl-12 pr-4 py-4 text-base border border-border focus:border-primary focus:outline-none transition-colors"
+    />
+  </div>
+
+  @if (query) {
+    <div class="flex gap-1 mb-6 bg-surface rounded-lg p-1 w-fit">
+      @for (tab of tabs; track tab.value) {
+        <button
+          (click)="activeTab.set(tab.value)"
+          class="px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
+          [class.bg-surface-2]="activeTab() === tab.value"
+          [class.text-white]="activeTab() === tab.value"
+          [class.text-muted]="activeTab() !== tab.value"
+        >{{ tab.label }}</button>
+      }
+    </div>
+
+    @if (loading()) {
+      <div class="text-center py-12">
+        <div class="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
+      </div>
+    } @else {
+      @if (activeTab() === 'all' || activeTab() === 'users') {
+        @if (users().length > 0) {
+          <div class="mb-8">
+            <h2 class="text-white font-bold mb-3">Users</h2>
+            <div class="space-y-2">
+              @for (u of users(); track u.id) {
+                <a [routerLink]="['/profile', u.id]" class="flex items-center gap-3 p-3 bg-surface rounded-lg hover:bg-surface-2 transition-colors">
+                  <app-avatar [avatar]="u.avatar" [username]="u.username" size="sm" />
+                  <div class="flex-1 min-w-0">
+                    <p class="text-white text-sm font-medium">{{ u.username }}</p>
+                    <p class="text-muted text-xs">{{ u.followers }} followers · {{ u.isPrivate ? '🔒 Private' : '🌍 Public' }}</p>
+                  </div>
+                </a>
+              }
+            </div>
+          </div>
+        }
+      }
+
+      @if (activeTab() === 'all' || activeTab() === 'playlists') {
+        @if (playlists().length > 0) {
+          <div class="mb-8">
+            <h2 class="text-white font-bold mb-3">Playlists</h2>
+            <div class="space-y-2">
+              @for (p of playlists(); track p.id) {
+                <a [routerLink]="['/playlist', p.id]" class="flex items-center gap-3 p-3 bg-surface rounded-lg hover:bg-surface-2 transition-colors">
+                  <img [src]="getCover(p)" [alt]="p.title" class="w-10 h-10 rounded object-cover" />
+                  <div class="flex-1 min-w-0">
+                    <p class="text-white text-sm font-medium truncate">{{ p.title }}</p>
+                    <p class="text-muted text-xs">{{ p.description || 'No description' }}</p>
+                  </div>
+                </a>
+              }
+            </div>
+          </div>
+        }
+      }
+
+      @if (activeTab() === 'all' || activeTab() === 'music') {
+        @if (musics().length > 0) {
+          <div class="mb-8">
+            <h2 class="text-white font-bold mb-3">Music</h2>
+            <div class="space-y-2">
+              @for (m of musics(); track m.id) {
+                <div class="flex items-center gap-3 p-3 bg-surface rounded-lg">
+                  <img [src]="m.thumbnail || 'https://via.placeholder.com/40'" [alt]="m.title" class="w-10 h-10 rounded object-cover" />
+                  <div class="flex-1 min-w-0">
+                    <p class="text-white text-sm font-medium truncate">{{ m.title }}</p>
+                    <span class="text-xs px-1.5 py-0.5 rounded" [class]="platformClass(m.platform)">{{ m.platform }}</span>
+                  </div>
+                  <span class="text-muted text-xs">{{ m.duration }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      }
+
+      @if (users().length === 0 && playlists().length === 0 && musics().length === 0) {
+        <div class="text-center py-16">
+          <p class="text-4xl mb-3">🔍</p>
+          <p class="text-white font-semibold">No results for "{{ query }}"</p>
+          <p class="text-muted text-sm mt-1">Try different keywords</p>
+        </div>
+      }
+    }
+  } @else {
+    <div class="text-center py-16">
+      <p class="text-4xl mb-3">🎵</p>
+      <p class="text-white font-semibold">Search for anything</p>
+      <p class="text-muted text-sm mt-1">Find users, playlists, and music</p>
+    </div>
+  }
+</div>

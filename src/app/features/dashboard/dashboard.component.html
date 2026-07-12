@@ -1,0 +1,82 @@
+<div class="p-6 max-w-5xl mx-auto">
+  <h1 class="text-white text-3xl font-bold mb-6">Dashboard</h1>
+
+  @if (loading()) {
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      @for (i of [1,2,3,4]; track i) {
+        <app-skeleton height="100px" extraClass="rounded-xl" />
+      }
+    </div>
+  } @else if (user()) {
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      @for (stat of stats(); track stat.label) {
+        <div class="bg-surface rounded-xl p-4 border border-border hover:border-primary/50 transition-colors">
+          <p class="text-3xl mb-1">{{ stat.icon }}</p>
+          <p class="text-white text-2xl font-bold">{{ stat.value }}</p>
+          <p class="text-muted text-sm">{{ stat.label }}</p>
+        </div>
+      }
+    </div>
+
+    <div class="bg-surface rounded-xl p-4 border border-border mb-8 flex items-center gap-3">
+      <span class="text-2xl">{{ user()!.isPrivate ? '🔒' : '🌍' }}</span>
+      <div>
+        <p class="text-white font-semibold">Account Status</p>
+        <p class="text-muted text-sm">{{ user()!.isPrivate ? 'Private — only accepted followers can see your playlists' : 'Public — everyone can see your playlists' }}</p>
+      </div>
+      <span
+        class="ml-auto px-3 py-1 rounded-full text-xs font-semibold"
+        [class.bg-primary]="!user()!.isPrivate"
+        [class.text-black]="!user()!.isPrivate"
+        [class.bg-surface-3]="user()!.isPrivate"
+        [class.text-muted]="user()!.isPrivate"
+      >{{ user()!.isPrivate ? 'Private' : 'Public' }}</span>
+    </div>
+
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-white text-xl font-bold">Recent Playlists</h2>
+        <a routerLink="/playlist" class="text-primary text-sm hover:underline">View all</a>
+      </div>
+      @if (recentPlaylists().length === 0) {
+        <p class="text-muted text-sm">No playlists yet. <a routerLink="/playlist" class="text-primary hover:underline">Create one!</a></p>
+      } @else {
+        <div class="space-y-2">
+          @for (p of recentPlaylists(); track p.id) {
+            <a
+              [routerLink]="['/playlist', p.id]"
+              class="flex items-center gap-3 p-3 bg-surface rounded-lg hover:bg-surface-2 transition-colors"
+            >
+              <img [src]="getCover(p)" [alt]="p.title" class="w-10 h-10 rounded object-cover" />
+              <div class="flex-1 min-w-0">
+                <p class="text-white text-sm font-medium truncate">{{ p.title }}</p>
+                <p class="text-muted text-xs">{{ p.description || 'No description' }}</p>
+              </div>
+              <span class="text-muted text-xs">{{ p.createdAt | timeAgo }}</span>
+            </a>
+          }
+        </div>
+      }
+    </div>
+
+    <div>
+      <h2 class="text-white text-xl font-bold mb-4">Recent Music</h2>
+      @if (recentMusics().length === 0) {
+        <p class="text-muted text-sm">No music added yet.</p>
+      } @else {
+        <div class="space-y-2">
+          @for (m of recentMusics(); track m.id) {
+            <div class="flex items-center gap-3 p-3 bg-surface rounded-lg">
+              <img [src]="m.thumbnail || 'https://via.placeholder.com/40'" [alt]="m.title" class="w-10 h-10 rounded object-cover" />
+              <div class="flex-1 min-w-0">
+                <p class="text-white text-sm font-medium truncate">{{ m.title }}</p>
+                <span class="text-xs px-2 py-0.5 rounded-full" [class]="platformClass(m.platform)">{{ m.platform }}</span>
+              </div>
+              <span class="text-muted text-xs">{{ m.duration }}</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

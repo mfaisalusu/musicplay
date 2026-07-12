@@ -1,0 +1,36 @@
+{
+  "name": "musicplay",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --port 4300",
+    "build": "ng build",
+    "json-server": "json-server --watch database/db.json --port 4300 --middlewares database/middleware.js"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^20.0.0",
+    "@angular/cdk": "^20.0.0",
+    "@angular/common": "^20.0.0",
+    "@angular/compiler": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/forms": "^20.0.0",
+    "@angular/platform-browser": "^20.0.0",
+    "@angular/platform-browser-dynamic": "^20.0.0",
+    "@angular/router": "^20.0.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^20.0.0",
+    "@angular/cli": "^20.0.0",
+    "@angular/compiler-cli": "^20.0.0",
+    "@tailwindcss/forms": "^0.5.7",
+    "autoprefixer": "^10.4.19",
+    "json-server": "^0.17.4",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.4",
+    "typescript": "~5.8.0"
+  }
+}

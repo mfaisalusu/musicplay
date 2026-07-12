@@ -1,0 +1,25 @@
+buatkan prompt untuk membuat sebuah aplikasi music online yang bisa menambahkan plyalist dari url seperti youtube, spotify, soundcloud 
+buatkan aplikasi menggunakan angular 20
+dan sistem penyimpanan menggunakan file json
+
+memiliki halaman
+<> login
+<> register
+<> home
+<> dashboard
+<> playlist
+<> setting
+
+memiliki feature 
+<> register menggunakan email
+<> login menggunakan email yang telah diregister
+<> mengubah password 
+<> menambahkan playlist music menggunakan url dari youtube, soundcloud, spotify
+<> bisa mengikuti user lain
+<> bisa menerima pengikut dan menghapus pengikut
+<> bisa melihat jumlah pengikut, jumlah playlist, jumlah musik yang di tambahkan
+<> bisa mengubah status user menjadi public atau private 
+( default pertama kali register public )
+<> menampilkan playlist kita ke semua user lain jika status user public bukan private pada halaman home
+<> menampilkan semua playlist user yang berstatus public di halaman home
+<> bisa memutar music di setiap playlist 

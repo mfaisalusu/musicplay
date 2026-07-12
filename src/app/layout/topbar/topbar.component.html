@@ -1,0 +1,36 @@
+<header class="flex items-center gap-4 px-6 py-4 bg-bg/80 backdrop-blur-md border-b border-border sticky top-0 z-30">
+  <!-- Menu toggle (mobile) -->
+  <button
+    (click)="menuToggle.emit()"
+    class="lg:hidden text-muted hover:text-white transition-colors"
+  >
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+  </button>
+
+  <!-- Search -->
+  <div class="flex-1 max-w-md relative">
+    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+    </svg>
+    <input
+      type="text"
+      placeholder="Search songs, playlists, users..."
+      [(ngModel)]="searchQuery"
+      (ngModelChange)="onSearch($event)"
+      (keydown.enter)="goToSearch()"
+      class="w-full bg-surface-2 text-white placeholder-muted rounded-full pl-10 pr-4 py-2 text-sm border border-transparent focus:border-primary focus:outline-none transition-colors"
+    />
+  </div>
+
+  <div class="flex-1"></div>
+
+  <!-- User -->
+  @if (authStore.session(); as session) {
+    <a [routerLink]="['/profile', session.userId]" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+      <app-avatar [avatar]="session.avatar" [username]="session.username" size="sm" />
+      <span class="text-white text-sm font-medium hidden sm:block">{{ session.username }}</span>
+    </a>
+  }
+</header>

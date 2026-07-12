@@ -1,0 +1,63 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+  <div class="bg-surface rounded-2xl p-6 w-full max-w-md shadow-2xl border border-border">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-white font-bold text-lg">{{ music ? 'Edit Music' : 'Add Music' }}</h3>
+      <button (click)="cancel.emit()" class="text-muted hover:text-white transition-colors">✕</button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+      <!-- URL -->
+      <div>
+        <label class="block text-sm text-muted mb-1.5">Music URL</label>
+        <input
+          type="url"
+          formControlName="url"
+          placeholder="YouTube, Spotify, or SoundCloud URL"
+          class="w-full bg-surface-2 text-white rounded-lg px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none transition-colors"
+          [class.border-red-500]="isInvalid('url')"
+        />
+        @if (detectedPlatform()) {
+          <p class="text-primary text-xs mt-1">✓ Detected: {{ detectedPlatform() }}</p>
+        }
+        @if (isInvalid('url')) {
+          <p class="text-red-400 text-xs mt-1">Valid YouTube, Spotify, or SoundCloud URL required</p>
+        }
+      </div>
+
+      <!-- Title -->
+      <div>
+        <label class="block text-sm text-muted mb-1.5">Title</label>
+        <input
+          type="text"
+          formControlName="title"
+          placeholder="Song title"
+          class="w-full bg-surface-2 text-white rounded-lg px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none transition-colors"
+          [class.border-red-500]="isInvalid('title')"
+        />
+      </div>
+
+      <!-- Duration -->
+      <div>
+        <label class="block text-sm text-muted mb-1.5">Duration (optional)</label>
+        <input
+          type="text"
+          formControlName="duration"
+          placeholder="e.g. 3:45"
+          class="w-full bg-surface-2 text-white rounded-lg px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none transition-colors"
+        />
+      </div>
+
+      <div class="flex gap-3 pt-2">
+        <button
+          type="button"
+          (click)="cancel.emit()"
+          class="flex-1 py-2.5 rounded-lg text-sm font-medium text-muted hover:text-white hover:bg-surface-3 transition-colors border border-border"
+        >Cancel</button>
+        <button
+          type="submit"
+          class="flex-1 py-2.5 rounded-lg text-sm font-bold bg-primary hover:bg-primary-dark text-black transition-colors"
+        >{{ music ? 'Save' : 'Add' }}</button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,41 @@
+<div
+  class="bg-surface rounded-xl overflow-hidden cursor-pointer hover:bg-surface-2 transition-all duration-200 hover:scale-[1.02] hover:shadow-xl group"
+  (click)="clicked.emit(playlist)"
+>
+  <div class="relative aspect-square overflow-hidden">
+    <img
+      [src]="coverSrc"
+      [alt]="playlist.title"
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      (error)="onCoverError($event)"
+    />
+    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
+    @if (showPlay) {
+      <button
+        class="absolute bottom-3 right-3 w-10 h-10 bg-primary rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg hover:scale-110 hover:bg-primary-dark"
+        (click)="$event.stopPropagation(); play.emit(playlist)"
+      >
+        <svg class="w-5 h-5 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </button>
+    }
+  </div>
+  <div class="p-3">
+    <h3 class="text-white font-semibold text-sm truncate">{{ playlist.title }}</h3>
+    @if (owner) {
+      <p class="text-muted text-xs mt-0.5 truncate">{{ owner.username }}</p>
+    }
+    <div class="flex items-center justify-between mt-2 text-xs text-muted">
+      <div class="flex items-center gap-2">
+        @if (musicCount !== undefined) {
+          <span>{{ musicCount }} songs</span>
+        }
+        @if (owner) {
+          <span>· {{ owner.followers }} followers</span>
+        }
+      </div>
+      <span class="text-muted/60">{{ playlist.createdAt | timeAgo }}</span>
+    </div>
+  </div>
+</div>

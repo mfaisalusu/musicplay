@@ -1,0 +1,12 @@
+<div class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none">
+  @for (toast of store.toasts(); track toast.id) {
+    <div
+      class="pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-sm font-medium animate-slide-up min-w-64 max-w-sm"
+      [class]="toastClass(toast.type)"
+    >
+      <span class="text-lg">{{ toastIcon(toast.type) }}</span>
+      <span class="flex-1">{{ toast.message }}</span>
+      <button (click)="store.remove(toast.id)" class="opacity-70 hover:opacity-100 ml-2">✕</button>
+    </div>
+  }
+</div>

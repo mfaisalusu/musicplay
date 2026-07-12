@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Markdown
+*.md
+
+# Build output
+dist/
+.angular/cache/
+
+# Environment files
+src/environments/environment*.ts
+!src/environments/environment.ts
+
+# Firebase
+.firebase/
+firebase-debug.log
+.firebaserc
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local database
+database/db.json

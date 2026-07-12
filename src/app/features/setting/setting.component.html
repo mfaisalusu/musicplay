@@ -1,0 +1,90 @@
+<div class="p-6 max-w-2xl mx-auto">
+  <h1 class="text-white text-3xl font-bold mb-8">Settings</h1>
+
+  @if (user()) {
+    <section class="bg-surface rounded-xl p-6 border border-border mb-6">
+      <h2 class="text-white font-bold text-lg mb-5">Profile</h2>
+
+      <div class="flex items-center gap-4 mb-6">
+        <app-avatar [avatar]="previewAvatar() || user()!.avatar" [username]="user()!.username" size="xl" />
+        <div>
+          <label class="cursor-pointer bg-surface-2 hover:bg-surface-3 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors border border-border">
+            Change Avatar
+            <input type="file" accept="image/*" class="hidden" (change)="onAvatarChange($event)" />
+          </label>
+          <p class="text-muted text-xs mt-1">JPG, PNG up to 2MB</p>
+        </div>
+      </div>
+
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="space-y-4">
+        <div>
+          <label class="block text-sm text-muted mb-1.5">Username</label>
+          <input type="text" formControlName="username"
+            class="w-full bg-surface-2 text-white rounded-lg px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none transition-colors" />
+        </div>
+        <div>
+          <label class="block text-sm text-muted mb-1.5">Bio</label>
+          <textarea formControlName="bio" rows="3" placeholder="Tell people about yourself..."
+            class="w-full bg-surface-2 text-white rounded-lg px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none resize-none transition-colors"></textarea>
+        </div>
+        <div class="flex items-center justify-between p-4 bg-surface-2 rounded-lg">
+          <div>
+            <p class="text-white font-medium text-sm">Private Account</p>
+            <p class="text-muted text-xs mt-0.5">Only accepted followers can see your playlists</p>
+          </div>
+          <button
+            type="button"
+            (click)="togglePrivate()"
+            class="relative w-12 h-6 rounded-full transition-colors"
+            [class.bg-primary]="profileForm.get('isPrivate')?.value"
+            [class.bg-surface-3]="!profileForm.get('isPrivate')?.value"
+          >
+            <span
+              class="absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"
+              [class.translate-x-6]="profileForm.get('isPrivate')?.value"
+              [class.translate-x-0.5]="!profileForm.get('isPrivate')?.value"
+            ></span>
+          </button>
+        </div>
+        <button type="submit" [disabled]="savingProfile()"
+          class="bg-primary hover:bg-primary-dark text-black font-bold px-6 py-2.5 rounded-full transition-colors disabled:opacity-50">
+          {{ savingProfile() ? 'Saving...' : 'Save Profile' }}
+        </button>
+      </form>
+    </section>
+
+    <section class="bg-surface rounded-xl p-6 border border-border">
+      <h2 class="text-white font-bold text-lg mb-5">Change Password</h2>
+      <form [formGroup]="passwordForm" (ngSubmit)="savePassword()" class="space-y-4">
+        <div>
+          <label class="block text-sm text-muted mb-1.5">Current Password</label>
+          <input type="password" formControlName="currentPassword"
+            class="w-full bg-surface-2 text-white rounded-lg px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none transition-colors"
+            [class.border-red-500]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched" />
+        </div>
+        <div>
+          <label class="block text-sm text-muted mb-1.5">New Password</label>
+          <input type="password" formControlName="newPassword" placeholder="Min. 8 characters"
+            class="w-full bg-surface-2 text-white rounded-lg px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none transition-colors"
+            [class.border-red-500]="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched" />
+        </div>
+        <div>
+          <label class="block text-sm text-muted mb-1.5">Confirm New Password</label>
+          <input type="password" formControlName="confirmPassword"
+            class="w-full bg-surface-2 text-white rounded-lg px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none transition-colors"
+            [class.border-red-500]="passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched" />
+          @if (passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched) {
+            <p class="text-red-400 text-xs mt-1">Passwords do not match</p>
+          }
+        </div>
+        @if (passwordError()) {
+          <p class="text-red-400 text-sm bg-red-400/10 rounded-lg py-2 px-3">{{ passwordError() }}</p>
+        }
+        <button type="submit" [disabled]="savingPassword()"
+          class="bg-primary hover:bg-primary-dark text-black font-bold px-6 py-2.5 rounded-full transition-colors disabled:opacity-50">
+          {{ savingPassword() ? 'Updating...' : 'Update Password' }}
+        </button>
+      </form>
+    </section>
+  }
+</div>

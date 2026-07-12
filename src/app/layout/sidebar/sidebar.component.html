@@ -1,0 +1,73 @@
+<aside
+  class="flex flex-col h-full bg-black"
+  [class.w-64]="!collapsed"
+  [class.w-16]="collapsed"
+>
+  <!-- Logo -->
+  <div class="flex items-center gap-3 px-4 py-5 border-b border-border">
+    <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+      <svg class="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+      </svg>
+    </div>
+    @if (!collapsed) {
+      <span class="text-white font-bold text-lg tracking-tight">MusicPlay</span>
+    }
+  </div>
+
+  <!-- Nav -->
+  <nav class="flex-1 py-4 overflow-y-auto">
+    @for (item of navItems; track item.route) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="text-white bg-surface-2"
+        class="flex items-center gap-3 px-4 py-3 text-muted hover:text-white hover:bg-surface-2 transition-colors rounded-lg mx-2 mb-1"
+        [title]="collapsed ? item.label : ''"
+      >
+        <span class="text-xl flex-shrink-0" [innerHTML]="item.icon"></span>
+        @if (!collapsed) {
+          <span class="text-sm font-medium">{{ item.label }}</span>
+        }
+      </a>
+    }
+  </nav>
+
+  <!-- Bottom -->
+  <div class="border-t border-border p-4 space-y-2">
+    <!-- Theme toggle -->
+    <button
+      (click)="themeStore.toggle()"
+      class="flex items-center gap-3 w-full px-2 py-2 text-muted hover:text-white transition-colors rounded-lg hover:bg-surface-2"
+      [title]="collapsed ? 'Toggle theme' : ''"
+    >
+      <span class="text-xl flex-shrink-0">{{ themeStore.theme() === 'dark' ? '☀️' : '🌙' }}</span>
+      @if (!collapsed) {
+        <span class="text-sm">{{ themeStore.theme() === 'dark' ? 'Light Mode' : 'Dark Mode' }}</span>
+      }
+    </button>
+
+    <!-- User -->
+    @if (authStore.session(); as session) {
+      <div class="flex items-center gap-3">
+        <app-avatar [avatar]="session.avatar" [username]="session.username" size="sm" class="flex-shrink-0" />
+        @if (!collapsed) {
+          <div class="flex-1 min-w-0">
+            <p class="text-white text-sm font-medium truncate">{{ session.username }}</p>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Logout -->
+    <button
+      (click)="onLogout()"
+      class="flex items-center gap-3 w-full px-2 py-2 text-muted hover:text-red-400 transition-colors rounded-lg hover:bg-surface-2"
+      [title]="collapsed ? 'Logout' : ''"
+    >
+      <span class="text-xl flex-shrink-0">🚪</span>
+      @if (!collapsed) {
+        <span class="text-sm">Logout</span>
+      }
+    </button>
+  </div>
+</aside>

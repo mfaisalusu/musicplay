@@ -1,0 +1,36 @@
+<div class="flex h-screen bg-bg text-white overflow-hidden">
+  @if (mobileMenuOpen()) {
+    <div
+      class="fixed inset-0 bg-black/60 z-40 lg:hidden"
+      (click)="mobileMenuOpen.set(false)"
+    ></div>
+  }
+
+  <div
+    class="fixed lg:relative z-50 lg:z-auto h-full transition-transform duration-300"
+    [ngClass]="{
+      '-translate-x-full': !mobileMenuOpen(),
+      'translate-x-0': mobileMenuOpen()
+    }"
+    [style.transform]="isDesktop() ? 'none' : ''"
+  >
+    <app-sidebar [collapsed]="sidebarCollapsed()" />
+  </div>
+
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    @if (loadingStore.isLoading()) {
+      <div class="h-0.5 bg-surface-3 fixed top-0 left-0 right-0 z-50">
+        <div class="h-full bg-primary animate-pulse w-full"></div>
+      </div>
+    }
+
+    <app-topbar (menuToggle)="toggleMenu()" />
+
+    <main
+      class="flex-1 overflow-y-auto"
+      [class.pb-24]="playerStore.showPlayer()"
+    >
+      <router-outlet />
+    </main>
+  </div>
+</div>
