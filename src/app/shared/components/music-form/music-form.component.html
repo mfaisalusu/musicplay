@@ -34,13 +34,8 @@
           class="w-full bg-surface-2 text-white rounded-lg px-4 py-3 text-sm border border-border focus:border-primary focus:outline-none transition-colors"
           [class.border-red-500]="isInvalid('title')"
         />
-        @if (fetchingDuration()) {
-          <p class="text-muted text-xs mt-1.5 flex items-center gap-1">
-            <span class="inline-block w-3 h-3 border border-muted border-t-transparent rounded-full animate-spin"></span>
-            Detecting duration...
-          </p>
-        } @else if (detectedDuration()) {
-          <p class="text-primary text-xs mt-1.5">✓ Duration: {{ detectedDuration() }}</p>
+        @if (isInvalid('title')) {
+          <p class="text-red-400 text-xs mt-1">Title is required</p>
         }
       </div>
 

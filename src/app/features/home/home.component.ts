@@ -8,7 +8,7 @@ import { Playlist } from '@core/models/playlist.model';
 import { User } from '@core/models/user.model';
 import { MusicService } from '@core/services/music.service';
 import { UserService } from '@core/services/user.service';
-import { PlayerStore } from '@core/stores/player.store';
+import { PlayerBarService } from '@core/services/player-bar.service';
 import { PlaylistCardComponent } from '@shared/components/playlist-card/playlist-card.component';
 import { SkeletonComponent } from '@shared/components/skeleton/skeleton.component';
 
@@ -30,11 +30,12 @@ export class HomeComponent implements OnInit {
   private readonly playlistService: PlaylistService = inject(PlaylistService);
   private readonly userService: UserService = inject(UserService);
   private readonly musicService: MusicService = inject(MusicService);
-  private readonly playerStore: PlayerStore = inject(PlayerStore);
+  private readonly playerBar: PlayerBarService = inject(PlayerBarService);
   private readonly router: Router = inject(Router);
 
   readonly loading = signal(true);
   readonly items = signal<PlaylistWithMeta[]>([]);
+  readonly recentMusics = signal<Music[]>([]);
   readonly skeletons = Array(12).fill(0);
 
   ngOnInit(): void {
@@ -58,6 +59,11 @@ export class HomeComponent implements OnInit {
           }));
 
         this.items.set(result);
+        this.recentMusics.set(
+          [...musics]
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .slice(0, 20)
+        );
         this.loading.set(false);
       },
       error: () => this.loading.set(false)
@@ -70,7 +76,11 @@ export class HomeComponent implements OnInit {
 
   onPlay(playlist: Playlist): void {
     this.musicService.getByPlaylistId(playlist.id).subscribe((musics: Music[]) => {
-      if (musics.length > 0) this.playerStore.loadPlaylist(musics);
+      if (musics.length > 0) this.playerBar.play(musics[0], musics);
     });
+  }
+
+  playMusic(music: Music): void {
+    this.playerBar.play(music, this.recentMusics());
   }
 }

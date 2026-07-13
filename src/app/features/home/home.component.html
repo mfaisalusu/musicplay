@@ -15,6 +15,49 @@
       }
     </div>
   } @else {
+
+    <!-- Recently Added Music -->
+    @if (recentMusics().length > 0) {
+      <div class="mb-10">
+        <h2 class="text-white text-xl font-bold mb-4">Recently Added</h2>
+        <div class="space-y-1">
+          @for (music of recentMusics(); track music.id; let i = $index) {
+            <div
+              class="group flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface transition-colors cursor-pointer"
+              (click)="playMusic(music)"
+            >
+              <!-- Index -->
+              <div class="w-6 text-center flex-shrink-0">
+                <span class="text-muted text-sm group-hover:hidden">{{ i + 1 }}</span>
+                <svg class="w-4 h-4 text-white hidden group-hover:block mx-auto" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </div>
+
+              <!-- Thumbnail -->
+              <img
+                [src]="music.thumbnail || 'https://via.placeholder.com/40x40/1e1e1e/666?text=%E2%99%AA'"
+                [alt]="music.title"
+                class="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+              />
+
+              <!-- Info -->
+              <div class="flex-1 min-w-0">
+                <p class="text-white text-sm font-medium truncate">{{ music.title }}</p>
+                <span class="text-muted text-xs">{{ music.platform }}</span>
+              </div>
+
+              <!-- Date -->
+              <span class="text-muted text-xs hidden sm:block flex-shrink-0">
+                {{ music.createdAt | date:'d MMM y' }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Public Playlists -->
     @if (items().length === 0) {
       <div class="text-center py-20">
         <p class="text-6xl mb-4">🎵</p>
@@ -22,6 +65,7 @@
         <p class="text-muted mt-2">Be the first to share your music!</p>
       </div>
     } @else {
+      <h2 class="text-white text-xl font-bold mb-4">Public Playlists</h2>
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         @for (item of items(); track item.playlist.id) {
           <app-playlist-card
