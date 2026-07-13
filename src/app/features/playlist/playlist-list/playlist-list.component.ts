@@ -9,13 +9,15 @@ import { MusicService } from '@core/services/music.service';
 import { ToastStore } from '@core/stores/toast.store';
 import { ConfirmDialogStore } from '@core/stores/confirm-dialog.store';
 import { Playlist } from '@models/playlist.model';
+import { Music } from '@models/music.model';
 import { getPlaylistCover } from '@core/utils/avatar.util';
 import { forkJoin } from 'rxjs';
+import { MusicFormComponent } from '@shared/components/music-form/music-form.component';
 
 @Component({
   selector: 'app-playlist-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MusicFormComponent],
   templateUrl: './playlist-list.component.html',
   styleUrls: ['./playlist-list.component.scss']
 })
@@ -34,6 +36,8 @@ export class PlaylistListComponent implements OnInit {
   readonly musicCounts = signal<Map<number, number>>(new Map());
   readonly showForm = signal(false);
   readonly editingPlaylist = signal<Playlist | null>(null);
+  readonly showMusicForm = signal(false);
+  readonly targetPlaylistId = signal<number | null>(null);
 
   readonly form = this.fb.group({
     title: ['', Validators.required],
@@ -116,5 +120,36 @@ export class PlaylistListComponent implements OnInit {
 
   goToDetail(playlist: Playlist): void {
     this.router.navigate(['/playlist', playlist.id]);
+  }
+
+  openMusicForm(playlistId: number): void {
+    this.targetPlaylistId.set(playlistId);
+    this.showMusicForm.set(true);
+  }
+
+  closeMusicForm(): void {
+    this.showMusicForm.set(false);
+    this.targetPlaylistId.set(null);
+  }
+
+  onMusicSaved(data: Partial<Music>): void {
+    const playlistId = this.targetPlaylistId()!;
+    this.musicService.checkDuplicate(playlistId, data.url!).subscribe({
+      next: ({ exists }) => {
+        if (exists) {
+          this.toast.error('Music with this URL already exists in this playlist');
+          return;
+        }
+        const order = this.musicCounts().get(playlistId) ?? 0;
+        const newMusic: Music = { ...(data as Music), playlistId, order, createdAt: new Date().toISOString() };
+        this.musicService.create(newMusic).subscribe({
+          next: () => {
+            this.musicCounts.update(m => new Map(m).set(playlistId, order + 1));
+            this.toast.success('Music added!');
+            this.closeMusicForm();
+          }
+        });
+      }
+    });
   }
 }

@@ -16,8 +16,14 @@ class Request
         $this->body     = $decoded !== null ? $decoded : [];
         $uri            = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $base           = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
-        $this->path     = '/' . trim(substr($uri, strlen($base)), '/');
-        $this->segments = array_values(array_filter(explode('/', $this->path)));
+        $path           = '/' . trim(substr($uri, strlen($base)), '/');
+        $segments       = array_values(array_filter(explode('/', $path)));
+        // Strip 'api' prefix jika ada (misal URL: /api/auth/login)
+        if (isset($segments[0]) && $segments[0] === 'api') {
+            array_shift($segments);
+        }
+        $this->path     = '/' . implode('/', $segments);
+        $this->segments = $segments;
     }
 
     public function segment(int $index): ?string

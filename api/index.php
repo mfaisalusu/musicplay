@@ -40,7 +40,8 @@ try {
 try {
     $req      = new Request();
     $resource = $req->segment(0);
-    $id       = $req->segment(1) !== null ? (int)$req->segment(1) : null;
+    $seg1     = $req->segment(1);
+    $id       = ($seg1 !== null && is_numeric($seg1)) ? (int)$seg1 : null;
     $method   = $req->method;
 
     if ($resource === 'auth') {
@@ -86,7 +87,10 @@ try {
 
     } elseif ($resource === 'musics') {
         $ctrl = new MusicController(new MusicRepository($db));
-        if ($id === null && $method === 'GET') {
+        $sub = $req->segment(1);
+        if ($sub === 'check' && $method === 'GET') {
+            $ctrl->checkDuplicate($req);
+        } elseif ($id === null && $method === 'GET') {
             $ctrl->index($req);
         } elseif ($id === null && $method === 'POST') {
             $ctrl->store($req);

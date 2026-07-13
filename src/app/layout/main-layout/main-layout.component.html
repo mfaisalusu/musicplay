@@ -26,11 +26,10 @@
 
     <app-topbar (menuToggle)="toggleMenu()" />
 
-    <main
-      class="flex-1 overflow-y-auto"
-      [class.pb-24]="playerStore.showPlayer()"
-    >
+    <main class="flex-1 overflow-y-auto">
       <router-outlet />
     </main>
+
+    <app-player />
   </div>
 </div>

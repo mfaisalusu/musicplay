@@ -26,6 +26,12 @@ export class MusicService {
     }).pipe(map(r => r.data));
   }
 
+  checkDuplicate(playlistId: number, url: string): Observable<{ exists: boolean; music: Music | null }> {
+    return this.http.get<ApiResponse<{ exists: boolean; music: Music | null }>>(`${this.baseUrl}/musics/check`, {
+      params: new HttpParams().set('playlist_id', playlistId).set('url', url)
+    }).pipe(map(r => r.data));
+  }
+
   create(dto: CreateMusicDto): Observable<Music> {
     return this.http.post<ApiResponse<Music>>(`${this.baseUrl}/musics`, {
       playlist_id: dto.playlistId,

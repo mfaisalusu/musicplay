@@ -11,6 +11,15 @@ class MusicController
         Response::success($this->musicRepo->findAll($playlistId));
     }
 
+    public function checkDuplicate(Request $req): void
+    {
+        $playlistId = isset($req->query['playlist_id']) ? (int)$req->query['playlist_id'] : 0;
+        $url = isset($req->query['url']) ? trim($req->query['url']) : '';
+        if (!$playlistId || !$url) { Response::error('playlist_id and url are required'); return; }
+        $existing = $this->musicRepo->findByUrl($playlistId, $url);
+        Response::success(['exists' => $existing !== null, 'music' => $existing]);
+    }
+
     public function show(int $id): void
     {
         $music = $this->musicRepo->findById($id);

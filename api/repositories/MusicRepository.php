@@ -5,6 +5,13 @@ class MusicRepository
     private PDO $db;
     public function __construct(PDO $db) { $this->db = $db; }
 
+    public function findByUrl(int $playlistId, string $url): ?array
+    {
+        $stmt = $this->db->prepare('SELECT * FROM musics WHERE playlist_id=? AND url=?');
+        $stmt->execute([$playlistId, $url]);
+        return $stmt->fetch() ?: null;
+    }
+
     public function findAll(?int $playlistId = null): array
     {
         if ($playlistId !== null) {

@@ -9,16 +9,17 @@ import { UserService } from '@core/services/user.service';
 import { AuthStore } from '@core/stores/auth.store';
 import { ToastStore } from '@core/stores/toast.store';
 import { ConfirmDialogStore } from '@core/stores/confirm-dialog.store';
-import { PlayerStore } from '@core/stores/player.store';
+import { PlayerBarService } from '@core/services/player-bar.service';
 import { Playlist } from '@models/playlist.model';
 import { Music } from '@models/music.model';
 import { User } from '@models/user.model';
 import { getPlaylistCover } from '@core/utils/avatar.util';
+import { MusicFormComponent } from '@shared/components/music-form/music-form.component';
 
 @Component({
   selector: 'app-playlist-detail',
   standalone: true,
-  imports: [CommonModule, DragDropModule],
+  imports: [CommonModule, DragDropModule, MusicFormComponent],
   templateUrl: './playlist-detail.component.html',
   styleUrls: ['./playlist-detail.component.scss']
 })
@@ -31,7 +32,7 @@ export class PlaylistDetailComponent implements OnInit {
   private readonly authStore = inject(AuthStore);
   private readonly toast = inject(ToastStore);
   private readonly confirm = inject(ConfirmDialogStore);
-  readonly playerStore = inject(PlayerStore);
+  readonly playerStore = inject(PlayerBarService);
 
   readonly loading = signal(true);
   readonly playlist = signal<Playlist | null>(null);
@@ -82,15 +83,16 @@ export class PlaylistDetailComponent implements OnInit {
 
   playAll(): void {
     const tracks = this.musics();
-    if (tracks.length > 0) this.playerStore.loadPlaylist(tracks);
+    if (tracks.length > 0) this.playerStore.play(tracks[0], tracks);
   }
 
   playTrack(index: number): void {
     const tracks = this.musics();
-    if (this.playerStore.queue().length !== tracks.length) {
-      this.playerStore.loadPlaylist(tracks, index);
+    const music = tracks[index];
+    if (this.playerStore.currentMusic()?.id === music.id) {
+      this.playerStore.togglePlay();
     } else {
-      this.playerStore.playTrack(index);
+      this.playerStore.play(music, tracks);
     }
   }
 
@@ -115,22 +117,21 @@ export class PlaylistDetailComponent implements OnInit {
         }
       });
     } else {
-      const order = this.musics().length;
-      const newMusic: Music = {
-        ...(data as Music),
-        playlistId: this.playlistId,
-        order,
-        createdAt: new Date().toISOString()
-      };
-      this.musicService.create(newMusic).subscribe({
-        next: (created) => {
-          this.musics.update(list => [...list, created]);
-          const userId = this.authStore.userId()!;
-          this.userService.getById(userId).subscribe(u => {
-            this.userService.update(userId, { musicCount: u.musicCount + 1 }).subscribe();
+      this.musicService.checkDuplicate(this.playlistId, data.url!).subscribe({
+        next: ({ exists }) => {
+          if (exists) {
+            this.toast.error('Music with this URL already exists in this playlist');
+            return;
+          }
+          const order = this.musics().length;
+          const newMusic: Music = { ...(data as Music), playlistId: this.playlistId, order, createdAt: new Date().toISOString() };
+          this.musicService.create(newMusic).subscribe({
+            next: (created) => {
+              this.musics.update(list => [...list, created]);
+              this.toast.success('Music added!');
+              this.closeMusicForm();
+            }
           });
-          this.toast.success('Music added!');
-          this.closeMusicForm();
         }
       });
     }
@@ -145,10 +146,6 @@ export class PlaylistDetailComponent implements OnInit {
         this.musicService.remove(music.id).subscribe({
           next: () => {
             this.musics.update(list => list.filter(m => m.id !== music.id));
-            const userId = this.authStore.userId()!;
-            this.userService.getById(userId).subscribe(u => {
-              this.userService.update(userId, { musicCount: Math.max(0, u.musicCount - 1) }).subscribe();
-            });
             this.toast.success('Music removed');
           }
         });

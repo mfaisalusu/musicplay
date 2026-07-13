@@ -3,18 +3,17 @@ import { CommonModule, NgClass } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { TopbarComponent } from '../topbar/topbar.component';
-import { PlayerStore } from '@core/stores/player.store';
+import { PlayerComponent } from '../../features/player/player.component';
 import { LoadingStore } from '@core/stores/loading.store';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, NgClass, RouterOutlet, SidebarComponent, TopbarComponent],
+  imports: [CommonModule, NgClass, RouterOutlet, SidebarComponent, TopbarComponent, PlayerComponent],
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.scss']
 })
 export class MainLayoutComponent {
-  readonly playerStore = inject(PlayerStore);
   readonly loadingStore = inject(LoadingStore);
   readonly mobileMenuOpen = signal(false);
   readonly sidebarCollapsed = signal(false);
