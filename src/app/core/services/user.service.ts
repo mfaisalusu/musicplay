@@ -1,35 +1,39 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { User, CreateUserDto, UpdateUserDto } from '../models/user.model';
+import { User, UpdateUserDto } from '../models/user.model';
+
+interface ApiResponse<T> { success: boolean; data: T; }
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private readonly http: HttpClient = inject(HttpClient);
+  private readonly http = inject(HttpClient);
   private readonly baseUrl = environment.apiUrl;
 
   getAll(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.baseUrl}/users`);
+    return this.http.get<ApiResponse<User[]>>(`${this.baseUrl}/users`).pipe(map(r => r.data));
   }
 
   getById(id: number): Observable<User> {
-    return this.http.get<User>(`${this.baseUrl}/users/${id}`);
+    return this.http.get<ApiResponse<User>>(`${this.baseUrl}/users/${id}`).pipe(map(r => r.data));
   }
 
+  // Dipakai auth lama — sekarang tidak digunakan, tapi tetap ada untuk kompatibilitas
   getByEmail(email: string): Observable<User[]> {
-    return this.http.get<User[]>(`${this.baseUrl}/users`, { params: new HttpParams().set('email', email) });
+    return this.getAll().pipe(map(users => users.filter(u => u.email === email)));
   }
 
-  create(dto: CreateUserDto): Observable<User> {
-    return this.http.post<User>(`${this.baseUrl}/users`, dto);
+  create(dto: any): Observable<User> {
+    return this.http.post<ApiResponse<User>>(`${this.baseUrl}/auth/register`, dto).pipe(map(r => r.data));
   }
 
   update(id: number, dto: UpdateUserDto): Observable<User> {
-    return this.http.patch<User>(`${this.baseUrl}/users/${id}`, dto);
+    return this.http.patch<ApiResponse<User>>(`${this.baseUrl}/users/${id}`, dto).pipe(map(r => r.data));
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/users/${id}`);
+    return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/users/${id}`).pipe(map(r => r.data));
   }
 }

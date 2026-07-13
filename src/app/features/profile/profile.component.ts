@@ -101,7 +101,7 @@ export class ProfileComponent implements OnInit {
   onUnfollow(): void {
     const rel = this.followRelation();
     if (!rel) return;
-    this.followerService.unfollow(rel.id).subscribe({
+    this.followerService.unfollow(rel.id, rel.followerId).subscribe({
       next: () => {
         const user = this.user()!;
         const currentUserId = this.authStore.userId()!;
