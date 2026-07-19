@@ -42,7 +42,7 @@
                   <app-avatar [avatar]="u.avatar" [username]="u.username" size="sm" />
                   <div class="flex-1 min-w-0">
                     <p class="text-white text-sm font-medium">{{ u.username }}</p>
-                    <p class="text-muted text-xs">{{ u.followers }} followers · {{ u.isPrivate ? '🔒 Private' : '🌍 Public' }}</p>
+                    <p class="text-muted text-xs">{{ u.followers }} followers · <i [class]="u.isPrivate ? 'ph-bold ph-lock' : 'ph-bold ph-globe'"></i> {{ u.isPrivate ? 'Private' : 'Public' }}</p>
                   </div>
                 </a>
               }
@@ -92,7 +92,7 @@
 
       @if (users().length === 0 && playlists().length === 0 && musics().length === 0) {
         <div class="text-center py-16">
-          <p class="text-4xl mb-3">🔍</p>
+          <p class="text-4xl mb-3"><i class="ph-bold ph-magnifying-glass"></i></p>
           <p class="text-white font-semibold">No results for "{{ query }}"</p>
           <p class="text-muted text-sm mt-1">Try different keywords</p>
         </div>
@@ -100,7 +100,7 @@
     }
   } @else {
     <div class="text-center py-16">
-      <p class="text-4xl mb-3">🎵</p>
+      <p class="text-4xl mb-3"><i class="ph-bold ph-music-notes"></i></p>
       <p class="text-white font-semibold">Search for anything</p>
       <p class="text-muted text-sm mt-1">Find users, playlists, and music</p>
     </div>

@@ -23,11 +23,11 @@
       </div>
     </div>
 
-    <div class="flex items-center gap-4 px-4 py-3 max-w-screen-xl mx-auto">
+    <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 px-4 py-3 max-w-screen-xl mx-auto">
 
       <!-- Track info -->
       @if (player.currentMusic(); as track) {
-        <div class="flex items-center gap-3 w-48 lg:w-56 flex-shrink-0 min-w-0">
+        <div class="flex items-center gap-3 w-full sm:w-48 lg:w-56 flex-shrink-0 min-w-0 order-1 sm:order-none justify-center sm:justify-start">
           <img
             [src]="track.thumbnail || 'https://via.placeholder.com/40x40/1e1e1e/666?text=%E2%99%AA'"
             [alt]="track.title"
@@ -41,7 +41,7 @@
       }
 
       <!-- Controls -->
-      <div class="flex-1 flex flex-col items-center gap-1">
+      <div class="flex-1 flex flex-col items-center gap-1 order-2 sm:order-none w-full sm:w-auto">
         <div class="flex items-center gap-3 lg:gap-4">
           <button
             (click)="player.toggleShuffle()"
@@ -108,7 +108,7 @@
       </div>
 
       <!-- Volume & Queue -->
-      <div class="flex items-center gap-2 lg:gap-3 w-32 lg:w-56 justify-end flex-shrink-0">
+      <div class="flex items-center gap-2 lg:gap-3 w-full sm:w-32 lg:w-56 justify-center sm:justify-end flex-shrink-0 order-3 sm:order-none">
         <button
           (click)="toggleQueue()"
           class="text-muted hover:text-white transition-colors hidden sm:block"

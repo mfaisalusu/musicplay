@@ -1,98 +1,167 @@
-<div class="p-6 max-w-4xl mx-auto">
+<div class="max-w-4xl mx-auto animate-fade-in">
+
   @if (loading()) {
-    <div class="flex gap-6 mb-8">
-      <app-skeleton width="96px" height="96px" extraClass="rounded-full flex-shrink-0" />
-      <div class="flex-1 space-y-3 pt-2">
-        <app-skeleton height="1.5rem" width="40%" />
-        <app-skeleton height="1rem" width="60%" />
+    <!-- Skeleton -->
+    <div class="h-40 sm:h-52 bg-surface-2 rounded-b-2xl mb-0"></div>
+    <div class="px-6 pb-6">
+      <div class="flex gap-5 -mt-12 mb-4 items-end">
+        <app-skeleton width="96px" height="96px" extraClass="rounded-full flex-shrink-0 ring-4 ring-bg" />
+        <div class="flex-1 space-y-2 pb-1">
+          <app-skeleton height="1.5rem" width="40%" />
+          <app-skeleton height="1rem" width="60%" />
+        </div>
       </div>
     </div>
   } @else if (user()) {
-    <div class="flex flex-col sm:flex-row gap-6 mb-8 items-start">
-      <app-avatar [avatar]="user()!.avatar" [username]="user()!.username" size="xl" class="flex-shrink-0" />
-      <div class="flex-1">
-        <div class="flex items-center gap-3 flex-wrap">
-          <h1 class="text-white text-2xl font-bold">{{ user()!.username }}</h1>
-          <span
-            class="px-2 py-0.5 rounded-full text-xs font-medium"
-            [class.bg-primary]="!user()!.isPrivate"
-            [class.text-black]="!user()!.isPrivate"
-            [class.bg-surface-3]="user()!.isPrivate"
-            [class.text-muted]="user()!.isPrivate"
-          >{{ user()!.isPrivate ? '🔒 Private' : '🌍 Public' }}</span>
-        </div>
-        @if (user()!.bio) {
-          <p class="text-muted text-sm mt-2">{{ user()!.bio }}</p>
-        }
-        <div class="flex gap-6 mt-3 text-sm">
-          <div><span class="text-white font-bold">{{ user()!.followers }}</span> <span class="text-muted">followers</span></div>
-          <div><span class="text-white font-bold">{{ user()!.following }}</span> <span class="text-muted">following</span></div>
-          <div><span class="text-white font-bold">{{ user()!.playlistCount }}</span> <span class="text-muted">playlists</span></div>
+
+    <!-- Profile header -->
+    <div class="px-4 sm:px-6 pt-6 pb-6">
+      <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start">
+
+        <!-- Avatar -->
+        <div class="flex-shrink-0">
+          <app-avatar [avatar]="user()!.avatar" [username]="user()!.username" size="xl" />
         </div>
 
-        @if (!isOwnProfile()) {
-          <div class="mt-4">
-            @if (followRelation()) {
-              @if (followRelation()!.status === 'pending') {
-                <button
-                  (click)="onUnfollow()"
-                  class="px-5 py-2 rounded-full text-sm font-semibold border border-border text-muted hover:border-red-400 hover:text-red-400 transition-colors"
-                >Pending</button>
-              } @else if (followRelation()!.status === 'accepted') {
-                <button
-                  (click)="onUnfollow()"
-                  class="px-5 py-2 rounded-full text-sm font-semibold border border-border text-white hover:border-red-400 hover:text-red-400 transition-colors"
-                >Following</button>
-              }
-            } @else {
-              <button
-                (click)="onFollow()"
-                class="px-5 py-2 rounded-full text-sm font-semibold bg-white text-black hover:bg-gray-200 transition-colors"
-              >Follow</button>
+        <!-- Info -->
+        <div class="flex-1 w-full">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2 flex-wrap">
+              <h1 class="text-white text-2xl font-bold tracking-tight">{{ user()!.username }}</h1>
+              <span
+                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium"
+                [class.bg-primary]="!user()!.isPrivate"
+                [class.text-black]="!user()!.isPrivate"
+                [class.bg-surface-3]="user()!.isPrivate"
+                [class.text-muted]="user()!.isPrivate"
+              >
+                <i [class]="user()!.isPrivate ? 'ph-bold ph-lock' : 'ph-bold ph-globe'"></i>
+                {{ user()!.isPrivate ? 'Private' : 'Public' }}
+              </span>
+            </div>
+
+            @if (!isOwnProfile()) {
+              <div>
+                @if (followRelation()) {
+                  @if (followRelation()!.status === 'pending') {
+                    <button
+                      (click)="onUnfollow()"
+                      class="px-5 py-2 rounded-full text-sm font-semibold border border-border text-muted hover:border-red-400 hover:text-red-400 transition-colors"
+                    >
+                      <i class="ph-bold ph-clock mr-1"></i>Pending
+                    </button>
+                  } @else if (followRelation()!.status === 'accepted') {
+                    <button
+                      (click)="onUnfollow()"
+                      class="px-5 py-2 rounded-full text-sm font-semibold border border-border text-white hover:border-red-400 hover:text-red-400 transition-colors"
+                    >
+                      <i class="ph-bold ph-user-check mr-1"></i>Following
+                    </button>
+                  }
+                } @else {
+                  <button
+                    (click)="onFollow()"
+                    class="px-5 py-2 rounded-full text-sm font-semibold bg-primary text-black hover:bg-primary-dark transition-colors"
+                  >
+                    <i class="ph-bold ph-user-plus mr-1"></i>Follow
+                  </button>
+                }
+              </div>
             }
           </div>
-        }
+
+          @if (user()!.bio) {
+            <p class="text-muted text-sm mt-2 leading-relaxed">{{ user()!.bio }}</p>
+          }
+
+          <!-- Stats -->
+          <div class="flex gap-5 mt-4">
+            <div class="text-center sm:text-left">
+              <p class="text-white font-bold text-lg leading-none">{{ user()!.followers }}</p>
+              <p class="text-muted text-xs mt-0.5">Followers</p>
+            </div>
+            <div class="w-px bg-border"></div>
+            <div class="text-center sm:text-left">
+              <p class="text-white font-bold text-lg leading-none">{{ user()!.following }}</p>
+              <p class="text-muted text-xs mt-0.5">Following</p>
+            </div>
+            <div class="w-px bg-border"></div>
+            <div class="text-center sm:text-left">
+              <p class="text-white font-bold text-lg leading-none">{{ user()!.playlistCount }}</p>
+              <p class="text-muted text-xs mt-0.5">Playlists</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    @if (canViewPlaylists()) {
-      <div>
-        <h2 class="text-white text-xl font-bold mb-4">Playlists</h2>
-        @if (playlists().length === 0) {
-          <p class="text-muted text-sm">No public playlists.</p>
-        } @else {
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            @for (p of playlists(); track p.id) {
-              <app-playlist-card [playlist]="p" [owner]="user()!" />
+    <!-- Divider -->
+    <div class="border-t border-border mx-4 sm:mx-6"></div>
+
+    <!-- Content -->
+    <div class="px-4 sm:px-6 py-6 space-y-8">
+
+      <!-- Pending follow requests -->
+      @if (isOwnProfile() && pendingFollowers().length > 0) {
+        <div>
+          <h2 class="text-white text-base font-semibold mb-3 flex items-center gap-2">
+            <i class="ph-bold ph-bell text-primary"></i>
+            Follow Requests
+            <span class="ml-1 px-2 py-0.5 bg-primary text-black text-xs font-bold rounded-full">{{ pendingFollowers().length }}</span>
+          </h2>
+          <div class="space-y-2">
+            @for (req of pendingFollowers(); track req.follower.id) {
+              <div class="flex items-center gap-3 p-3 bg-surface-2 rounded-xl border border-border hover:border-surface-3 transition-colors">
+                <app-avatar [avatar]="req.user.avatar" [username]="req.user.username" size="sm" />
+                <div class="flex-1 min-w-0">
+                  <p class="text-white text-sm font-medium truncate">{{ req.user.username }}</p>
+                  <p class="text-muted text-xs">wants to follow you</p>
+                </div>
+                <div class="flex gap-2">
+                  <button
+                    (click)="acceptFollower(req.follower)"
+                    class="px-3 py-1.5 bg-primary text-black text-xs font-bold rounded-full hover:bg-primary-dark transition-colors"
+                  >Accept</button>
+                  <button
+                    (click)="rejectFollower(req.follower)"
+                    class="px-3 py-1.5 bg-surface-3 text-muted text-xs rounded-full hover:bg-red-600/20 hover:text-red-400 transition-colors"
+                  >Reject</button>
+                </div>
+              </div>
             }
           </div>
-        }
-      </div>
-    } @else {
-      <div class="text-center py-16 border border-dashed border-border rounded-xl">
-        <p class="text-4xl mb-3">🔒</p>
-        <p class="text-white font-semibold">This account is private</p>
-        <p class="text-muted text-sm mt-1">Follow this user to see their playlists</p>
-      </div>
-    }
+        </div>
+      }
 
-    @if (isOwnProfile() && pendingFollowers().length > 0) {
-      <div class="mt-8">
-        <h2 class="text-white text-xl font-bold mb-4">Pending Follow Requests</h2>
-        <div class="space-y-2">
-          @for (req of pendingFollowers(); track req.follower.id) {
-            <div class="flex items-center gap-3 p-3 bg-surface rounded-lg">
-              <app-avatar [avatar]="req.user.avatar" [username]="req.user.username" size="sm" />
-              <div class="flex-1 min-w-0">
-                <p class="text-white text-sm font-medium">{{ req.user.username }}</p>
-                <p class="text-muted text-xs">wants to follow you</p>
-              </div>
-              <button (click)="acceptFollower(req.follower)" class="px-3 py-1 bg-primary text-black text-xs font-bold rounded-full hover:bg-primary-dark transition-colors">Accept</button>
-              <button (click)="rejectFollower(req.follower)" class="px-3 py-1 bg-surface-3 text-muted text-xs rounded-full hover:bg-red-600/20 hover:text-red-400 transition-colors">Reject</button>
+      <!-- Playlists -->
+      @if (canViewPlaylists()) {
+        <div>
+          <h2 class="text-white text-base font-semibold mb-4 flex items-center gap-2">
+            <i class="ph-bold ph-music-notes-simple text-primary"></i>
+            Playlists
+          </h2>
+          @if (playlists().length === 0) {
+            <div class="text-center py-12 border border-dashed border-border rounded-xl">
+              <i class="ph-bold ph-playlist text-4xl text-muted block mb-2"></i>
+              <p class="text-white font-semibold text-sm">No playlists yet</p>
+              <p class="text-muted text-xs mt-1">Playlists will appear here</p>
+            </div>
+          } @else {
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              @for (p of playlists(); track p.id) {
+                <app-playlist-card [playlist]="p" [owner]="user()!" />
+              }
             </div>
           }
         </div>
-      </div>
-    }
+      } @else {
+        <div class="text-center py-16 border border-dashed border-border rounded-xl">
+          <i class="ph-bold ph-lock text-4xl text-muted block mb-3"></i>
+          <p class="text-white font-semibold">This account is private</p>
+          <p class="text-muted text-sm mt-1">Follow this user to see their playlists</p>
+        </div>
+      }
+
+    </div>
   }
 </div>

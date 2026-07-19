@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
@@ -9,6 +9,7 @@ import { User } from '@core/models/user.model';
 import { MusicService } from '@core/services/music.service';
 import { UserService } from '@core/services/user.service';
 import { PlayerBarService } from '@core/services/player-bar.service';
+import { AuthStore } from '@core/stores/auth.store';
 import { PlaylistCardComponent } from '@shared/components/playlist-card/playlist-card.component';
 import { SkeletonComponent } from '@shared/components/skeleton/skeleton.component';
 
@@ -31,6 +32,7 @@ export class HomeComponent implements OnInit {
   private readonly userService: UserService = inject(UserService);
   private readonly musicService: MusicService = inject(MusicService);
   private readonly playerBar: PlayerBarService = inject(PlayerBarService);
+  private readonly authStore: AuthStore = inject(AuthStore);
   private readonly router: Router = inject(Router);
 
   readonly loading = signal(true);
@@ -38,7 +40,17 @@ export class HomeComponent implements OnInit {
   readonly recentMusics = signal<Music[]>([]);
   readonly skeletons = Array(12).fill(0);
 
-  ngOnInit(): void {
+  constructor() {
+    effect(() => {
+      const userId = this.authStore.userId();
+      this.loadData(userId);
+    });
+  }
+
+  ngOnInit(): void {}
+
+  private loadData(currentUserId: number | null): void {
+    this.loading.set(true);
     forkJoin({
       playlists: this.playlistService.getAll(),
       users: this.userService.getAll(),
@@ -59,11 +71,16 @@ export class HomeComponent implements OnInit {
           }));
 
         this.items.set(result);
-        this.recentMusics.set(
-          [...musics]
-            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-            .slice(0, 20)
+
+        const userPlaylistIds = new Set(
+          playlists.filter((p: Playlist) => p.userId === currentUserId).map((p: Playlist) => p.id)
         );
+
+        const recent = [...musics]
+          .filter(m => currentUserId !== null && userPlaylistIds.has(m.playlistId))
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .slice(0, 20);
+        this.recentMusics.set(recent);
         this.loading.set(false);
       },
       error: () => this.loading.set(false)

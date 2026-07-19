@@ -33,6 +33,11 @@ export class PlayerBarService {
   readonly showPlayer   = computed(() => this.state().currentMusic !== null);
 
   initPlayer(): void {
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && this.state().isPlaying && this.player?.getPlayerState?.() !== 1) {
+        this.player?.playVideo();
+      }
+    });
     if ((window as any)['YT']) {
       this.createPlayer();
       return;
@@ -70,6 +75,7 @@ export class PlayerBarService {
       currentTime: 0,
       duration: 0,
     }));
+    this.updateMediaSession(music);
     const id = extractYoutubeId(music.url);
     if (id && this.player?.loadVideoById) {
       this.player.loadVideoById(id);
@@ -163,19 +169,41 @@ export class PlayerBarService {
     return [current, ...others];
   }
 
+  private updateMediaSession(music: any): void {
+    if (!('mediaSession' in navigator)) return;
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: music.title ?? '',
+      artist: music.artist ?? '',
+      artwork: music.coverUrl ? [{ src: music.coverUrl }] : [],
+    });
+    navigator.mediaSession.setActionHandler('play', () => { this.player?.playVideo(); this.state.update(s => ({ ...s, isPlaying: true })); });
+    navigator.mediaSession.setActionHandler('pause', () => { this.player?.pauseVideo(); this.state.update(s => ({ ...s, isPlaying: false })); });
+    navigator.mediaSession.setActionHandler('nexttrack', () => this.next());
+    navigator.mediaSession.setActionHandler('previoustrack', () => this.prev());
+  }
+
   private onStateChange(event: any): void {
     if (event.data === 1) {
       // playing
       this.state.update(s => ({ ...s, isPlaying: true, duration: this.player.getDuration() }));
+      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
       this.startProgress();
     } else if (event.data === 0) {
       // ended
       this.state.update(s => ({ ...s, isPlaying: false }));
       clearInterval(this.progressInterval);
       this.next();
-    } else {
-      // paused / buffering
+    } else if (event.data === 2) {
+      // paused — resume jika state masih isPlaying (browser auto-pause saat tab hidden)
+      if (this.state().isPlaying && document.hidden) {
+        this.player?.playVideo();
+        return;
+      }
       this.state.update(s => ({ ...s, isPlaying: false }));
+      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+      clearInterval(this.progressInterval);
+    } else {
+      // buffering dll
       clearInterval(this.progressInterval);
     }
   }

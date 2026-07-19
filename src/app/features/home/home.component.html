@@ -57,10 +57,15 @@
       </div>
     }
 
+    <!-- Divider -->
+    @if (recentMusics().length > 0) {
+      <div class="border-t border-border mb-10"></div>
+    }
+
     <!-- Public Playlists -->
     @if (items().length === 0) {
       <div class="text-center py-20">
-        <p class="text-6xl mb-4">🎵</p>
+        <p class="text-6xl mb-4"><i class="ph-bold ph-music-notes"></i></p>
         <p class="text-white text-xl font-semibold">No public playlists yet</p>
         <p class="text-muted mt-2">Be the first to share your music!</p>
       </div>

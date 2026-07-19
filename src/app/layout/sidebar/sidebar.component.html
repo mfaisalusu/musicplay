@@ -23,6 +23,7 @@
         routerLinkActive="text-white bg-surface-2"
         class="flex items-center gap-3 px-4 py-3 text-muted hover:text-white hover:bg-surface-2 transition-colors rounded-lg mx-2 mb-1"
         [title]="collapsed ? item.label : ''"
+        (click)="onNavClick()"
       >
         <span class="text-xl flex-shrink-0" [innerHTML]="item.icon"></span>
         @if (!collapsed) {
@@ -40,7 +41,7 @@
       class="flex items-center gap-3 w-full px-2 py-2 text-muted hover:text-white transition-colors rounded-lg hover:bg-surface-2"
       [title]="collapsed ? 'Toggle theme' : ''"
     >
-      <span class="text-xl flex-shrink-0">{{ themeStore.theme() === 'dark' ? '☀️' : '🌙' }}</span>
+      <span class="text-xl flex-shrink-0"><i [class]="themeStore.theme() === 'dark' ? 'ph-bold ph-sun' : 'ph-bold ph-moon'"></i></span>
       @if (!collapsed) {
         <span class="text-sm">{{ themeStore.theme() === 'dark' ? 'Light Mode' : 'Dark Mode' }}</span>
       }
@@ -64,7 +65,7 @@
       class="flex items-center gap-3 w-full px-2 py-2 text-muted hover:text-red-400 transition-colors rounded-lg hover:bg-surface-2"
       [title]="collapsed ? 'Logout' : ''"
     >
-      <span class="text-xl flex-shrink-0">🚪</span>
+      <span class="text-xl flex-shrink-0"><i class="ph-bold ph-sign-out"></i></span>
       @if (!collapsed) {
         <span class="text-sm">Logout</span>
       }

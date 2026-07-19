@@ -45,10 +45,10 @@ export class DashboardComponent implements OnInit {
         this.recentPlaylists.set(playlists.slice(-5).reverse());
         this.recentMusics.set(userMusics.slice(-5).reverse());
         this.stats.set([
-          { icon: '🎵', value: user.playlistCount, label: 'Playlists' },
-          { icon: '🎶', value: user.musicCount, label: 'Songs' },
-          { icon: '👥', value: user.followers, label: 'Followers' },
-          { icon: '➕', value: user.following, label: 'Following' }
+          { icon: '<i class="ph-bold ph-playlist"></i>', value: user.playlistCount, label: 'Playlists' },
+          { icon: '<i class="ph-bold ph-music-note"></i>', value: user.musicCount, label: 'Songs' },
+          { icon: '<i class="ph-bold ph-users"></i>', value: user.followers, label: 'Followers' },
+          { icon: '<i class="ph-bold ph-user-plus"></i>', value: user.following, label: 'Following' }
         ]);
         this.loading.set(false);
       },

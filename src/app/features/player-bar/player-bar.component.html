@@ -1,28 +1,34 @@
 <div id="yt-player" class="hidden"></div>
 
 @if (player.currentMusic()) {
-  <div class="fixed bottom-0 left-0 right-0 h-24 bg-sp-dark border-t border-sp-card flex items-center px-4 gap-4 z-50">
+  <div class="fixed bottom-0 left-0 right-0 bg-sp-dark border-t border-sp-card z-50">
 
-    <!-- Track info -->
-    <div class="flex items-center gap-3 w-64 min-w-0">
-      <img [src]="thumbnail()" class="w-14 h-14 rounded object-cover flex-shrink-0" alt="thumb" />
-      <div class="min-w-0">
-        <p class="text-white text-sm font-medium truncate">{{ player.currentMusic()!.title }}</p>
-        <p class="text-sp-muted text-xs truncate">YouTube</p>
-      </div>
-    </div>
+    <!-- Progress bar (top, full width) -->
+    <input type="range" class="w-full h-1 accent-sp-green cursor-pointer block"
+      [min]="0" [max]="player.duration() || 100"
+      [value]="player.currentTime()"
+      (input)="onSeek($event)" />
 
-    <!-- Controls -->
-    <div class="flex-1 flex flex-col items-center gap-1">
-      <div class="flex items-center gap-5">
+    <div class="flex items-center px-3 sm:px-4 gap-2 sm:gap-4 h-16 sm:h-20">
 
-        <!-- Shuffle -->
+      <!-- Track info -->
+      <!-- <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 sm:w-64 sm:flex-none">
+        <img [src]="thumbnail()" class="w-10 h-10 sm:w-12 sm:h-12 rounded object-cover flex-shrink-0" alt="thumb" />
+        <div class="min-w-0">
+          <p class="text-white text-xs sm:text-sm font-medium truncate">{{ player.currentMusic()!.title }}</p>
+          <p class="text-sp-muted text-xs truncate">YouTube</p>
+        </div>
+      </div> -->
+
+      <!-- Controls -->
+      <div class="flex items-center gap-3 sm:gap-5 flex-shrink-0">
+
+        <!-- Shuffle (hidden on mobile) -->
         <button (click)="player.toggleShuffle()" [title]="player.shuffle() ? 'Shuffle on' : 'Shuffle off'"
-          class="relative transition-colors"
+          class="relative transition-colors hidden sm:block"
           [class.text-sp-green]="player.shuffle()"
-          [class.text-sp-muted]="!player.shuffle()"
-          [class.hover:text-white]="!player.shuffle()">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          [class.text-sp-muted]="!player.shuffle()">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
             <path d="M10.59 9.17 5.41 4 4 5.41l5.17 5.17zm4.76-.18 3.65 3.65-3.65 3.65 1.41 1.41 5.06-5.06-5.06-5.06zm-.76 3.01L9.41 6.82 8 8.24l5.17 5.17zM4 18.59 5.41 20l5.17-5.17-1.41-1.41zm10.59.59 5.06-5.06-5.06-5.06-1.41 1.41 3.65 3.65-3.65 3.65z"/>
           </svg>
           @if (player.shuffle()) {
@@ -32,36 +38,35 @@
 
         <!-- Prev -->
         <button (click)="player.prev()" class="text-sp-muted hover:text-white transition-colors">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
         </button>
 
         <!-- Play/Pause -->
         <button (click)="player.togglePlay()"
-          class="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:scale-105 transition-transform">
+          class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white flex items-center justify-center hover:scale-105 transition-transform">
           @if (player.isPlaying()) {
-            <svg class="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-black" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
           } @else {
-            <svg class="w-5 h-5 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           }
         </button>
 
         <!-- Next -->
         <button (click)="player.next()" class="text-sp-muted hover:text-white transition-colors">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zm2-8.14 4.96 3.5L8 16.14V9.86zM16 6h2v12h-2z"/></svg>
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zm2-8.14 4.96 3.5L8 16.14V9.86zM16 6h2v12h-2z"/></svg>
         </button>
 
-        <!-- Repeat -->
+        <!-- Repeat (hidden on mobile) -->
         <button (click)="player.cycleRepeat()" [title]="repeatTitle()"
-          class="relative transition-colors"
+          class="relative transition-colors hidden sm:block"
           [class.text-sp-green]="player.repeat() !== 'off'"
-          [class.text-sp-muted]="player.repeat() === 'off'"
-          [class.hover:text-white]="player.repeat() === 'off'">
+          [class.text-sp-muted]="player.repeat() === 'off'">
           @if (player.repeat() === 'one') {
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-2V9h-1l-2 1v1h1.5v4H13z"/>
             </svg>
           } @else {
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
             </svg>
           }
@@ -72,27 +77,20 @@
 
       </div>
 
-      <!-- Progress bar -->
-      <div class="flex items-center gap-2 w-full max-w-lg">
+      <!-- Time + Volume (hidden on mobile) -->
+      <div class="hidden sm:flex items-center gap-2 flex-1 justify-end">
         <span class="text-sp-muted text-xs w-10 text-right">{{ formatTime(player.currentTime()) }}</span>
-        <input type="range" class="flex-1 h-1 accent-sp-green cursor-pointer"
-          [min]="0" [max]="player.duration() || 100"
-          [value]="player.currentTime()"
-          (input)="onSeek($event)" />
+        <span class="text-sp-muted text-xs">/</span>
         <span class="text-sp-muted text-xs w-10">{{ formatTime(player.duration()) }}</span>
+        <svg class="w-4 h-4 text-sp-muted flex-shrink-0 ml-2" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+        </svg>
+        <input type="range" class="w-20 h-1 accent-sp-green cursor-pointer"
+          [min]="0" [max]="100"
+          [value]="player.volume()"
+          (input)="onVolume($event)" />
       </div>
-    </div>
 
-    <!-- Volume -->
-    <div class="flex items-center gap-2 w-36 justify-end">
-      <svg class="w-4 h-4 text-sp-muted flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
-      </svg>
-      <input type="range" class="w-24 h-1 accent-sp-green cursor-pointer"
-        [min]="0" [max]="100"
-        [value]="player.volume()"
-        (input)="onVolume($event)" />
     </div>
-
   </div>
 }

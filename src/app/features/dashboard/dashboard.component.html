@@ -11,7 +11,7 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
       @for (stat of stats(); track stat.label) {
         <div class="bg-surface rounded-xl p-4 border border-border hover:border-primary/50 transition-colors">
-          <p class="text-3xl mb-1">{{ stat.icon }}</p>
+          <p class="text-3xl mb-1" [innerHTML]="stat.icon"></p>
           <p class="text-white text-2xl font-bold">{{ stat.value }}</p>
           <p class="text-muted text-sm">{{ stat.label }}</p>
         </div>
@@ -19,7 +19,7 @@
     </div>
 
     <div class="bg-surface rounded-xl p-4 border border-border mb-8 flex items-center gap-3">
-      <span class="text-2xl">{{ user()!.isPrivate ? '🔒' : '🌍' }}</span>
+      <span class="text-2xl"><i [class]="user()!.isPrivate ? 'ph-bold ph-lock' : 'ph-bold ph-globe'"></i></span>
       <div>
         <p class="text-white font-semibold">Account Status</p>
         <p class="text-muted text-sm">{{ user()!.isPrivate ? 'Private — only accepted followers can see your playlists' : 'Public — everyone can see your playlists' }}</p>

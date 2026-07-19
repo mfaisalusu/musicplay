@@ -22,6 +22,7 @@ interface NavItem {
 export class SidebarComponent {
   @Input() collapsed = false;
   @Output() collapsedChange = new EventEmitter<boolean>();
+  @Output() navClick = new EventEmitter<void>();
 
   readonly authStore = inject(AuthStore);
   readonly themeStore = inject(ThemeStore);
@@ -29,12 +30,16 @@ export class SidebarComponent {
   private readonly router = inject(Router);
 
   readonly navItems: NavItem[] = [
-    { label: 'Home', icon: '🏠', route: '/home' },
-    { label: 'Dashboard', icon: '📊', route: '/dashboard' },
-    { label: 'My Playlists', icon: '🎵', route: '/playlist' },
-    { label: 'Search', icon: '🔍', route: '/search' },
-    { label: 'Settings', icon: '⚙️', route: '/setting' }
+    { label: 'Home', icon: '<i class="ph-bold ph-house"></i>', route: '/home' },
+    { label: 'Dashboard', icon: '<i class="ph-bold ph-chart-bar"></i>', route: '/dashboard' },
+    { label: 'My Playlists', icon: '<i class="ph-bold ph-music-notes"></i>', route: '/playlist' },
+    { label: 'Search', icon: '<i class="ph-bold ph-magnifying-glass"></i>', route: '/search' },
+    { label: 'Settings', icon: '<i class="ph-bold ph-gear"></i>', route: '/setting' }
   ];
+
+  onNavClick(): void {
+    this.navClick.emit();
+  }
 
   onLogout(): void {
     this.authService.logout();
